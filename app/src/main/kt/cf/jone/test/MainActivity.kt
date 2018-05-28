@@ -10,6 +10,7 @@ import com.jone.base.binding.command.BaseCommand.Companion.command
 import com.jone.base.binding.command.ICommand
 import com.jone.base.http.HttpHelper
 import com.jone.base.utils.LogUtils
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity()
 {
