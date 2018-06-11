@@ -125,6 +125,25 @@ fun String.generateMD5(): String
     return hex.toString()
 }
 
+fun String.generateSHA1():String
+{
+    val bytes = generateAlgorithmBytes("SHA-1", this) ?: return this
+
+    val hex = StringBuilder(bytes.size * 2)
+
+    for (b in bytes)
+    {
+        val i: Int = b.toInt() and 0xff //获取低八位有效值
+        var hexString = Integer.toHexString(i) //将整数转化为16进制
+        if (hexString.length < 2)
+        {
+            hexString = "0" + hexString //如果是一位的话，补0
+        }
+        hex.append(hexString)
+    }
+    return hex.toString()
+}
+
 private fun generateAlgorithmBytes(algorithm: String, valueStr: String): ByteArray?
 {
     var digest: MessageDigest?

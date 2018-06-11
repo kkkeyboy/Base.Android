@@ -1,14 +1,11 @@
 package com.jone.base.utils.extend
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Fragment
 import android.app.Service
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
-import android.net.Uri
 import com.jone.base.utils.ContextUtils
 
 
@@ -52,6 +49,22 @@ inline fun <reified T: Any> Context.intentFor(vararg params: Pair<String, Any?>)
         ContextUtils.createIntent(this, T::class.java, params)
 
 inline fun <reified T: Any> Fragment.intentFor(vararg params: Pair<String, Any?>): Intent =
+        ContextUtils.createIntent(activity, T::class.java, params)
+
+inline fun <reified T: Activity> android.support.v4.app.Fragment.startActivity(vararg params: Pair<String, Any?>) =
+        ContextUtils.startActivity(activity, T::class.java, params)
+
+inline fun <reified T: Activity> android.support.v4.app.Fragment.startActivityForResult(requestCode: Int, vararg params: Pair<String, Any?>) =
+        startActivityForResult(ContextUtils.createIntent(activity, T::class.java, params), requestCode)
+
+inline fun <reified T: Service> android.support.v4.app.Fragment.startService(vararg params: Pair<String, Any?>) =
+        ContextUtils.startService(activity, T::class.java, params)
+
+
+inline fun <reified T : Service> android.support.v4.app.Fragment.stopService(vararg params: Pair<String, Any?>) =
+        ContextUtils.stopService(activity, T::class.java, params)
+
+inline fun <reified T: Any> android.support.v4.app.Fragment.intentFor(vararg params: Pair<String, Any?>): Intent =
         ContextUtils.createIntent(activity, T::class.java, params)
 
 /**

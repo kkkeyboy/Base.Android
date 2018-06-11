@@ -19,6 +19,7 @@ import com.jone.base.binding.adapter.BindingSectionedRecyclerViewAdapter
 import com.jone.base.binding.adapter.binder.IItemTemplate
 import com.jone.base.binding.adapter.binder.ISectionedItemTemplate
 import com.jone.base.binding.adapter.binder.ItemTemplate
+import com.jone.base.binding.command.BaseCommandWithContext
 import com.jone.base.binding.command.ICommand
 
 
@@ -30,6 +31,10 @@ object CustomViewBindings {
     @JvmStatic
     @BindingAdapter(value = *arrayOf("command", "commandParameter"), requireAll = false)
     fun bindViewCommandWithParameter(view: View, command: ICommand, commandParameter: Any?) {
+        if(command is BaseCommandWithContext<*>)
+        {
+            command.ctx = view.context
+        }
         view.setOnClickListener { _ ->
             if (command.canExecuteAny(commandParameter)) {
                 command.executeAny(commandParameter)

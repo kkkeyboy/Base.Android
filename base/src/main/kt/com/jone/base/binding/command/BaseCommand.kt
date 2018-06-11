@@ -25,6 +25,18 @@ abstract class BaseCommand<in T : Any?> : BaseObservable(), ICommand {
                 }
             }
         }
+
+        fun <T> commandWithContext(canExecuteBlock: BaseCommand<T>.(commandParameter: T) -> Boolean = { _ -> BaseCommandWithContext@ this.isEnable && !BaseCommandWithContext@ this.isRefreshing }, executeBlock: BaseCommandWithContext<T>.(commandParameter: T) -> Unit): BaseCommandWithContext<T> {
+            return object : BaseCommandWithContext<T>() {
+                override fun execute(commandParameter: T) {
+                    executeBlock.invoke(this, commandParameter)
+                }
+
+                override fun canExecute(commandParameter: T): Boolean {
+                    return canExecuteBlock.invoke(this, commandParameter)
+                }
+            }
+        }
     }
     override var isEnable: Boolean = true
         set(value: Boolean) {
