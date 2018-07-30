@@ -47,6 +47,7 @@ object CustomViewBindings {
     //region RecyclerView
 
     //region 普通RecyclerView
+
     @JvmStatic
     @BindingAdapter(value = *arrayOf("itemSource", "itemTemplate", "itemClickCommand", "itemLongClickCommand", "header", "headerBR", "headerViewModel", "footer", "footerBR", "footerViewModel"),
             requireAll = false)

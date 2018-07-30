@@ -4,6 +4,8 @@ import android.databinding.DataBindingUtil
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableList
 import android.databinding.ViewDataBinding
+import android.os.Handler
+import android.os.Looper
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -27,7 +29,7 @@ class BindingRecyclerViewAdapter<T>(private val itemTemplate: IItemTemplate<T>, 
         private set
     private var inflater: LayoutInflater? = null
     private var itemClickCommand: ICommand? = null
-    private var itemLongCLickCommand: ICommand?= null
+    private var itemLongCLickCommand: ICommand? = null
 
     init {
         this.onListChangedCallback = WeakReferenceOnListChangedCallback(this)
@@ -126,32 +128,69 @@ class BindingRecyclerViewAdapter<T>(private val itemTemplate: IItemTemplate<T>, 
 
     private class WeakReferenceOnListChangedCallback<T>(bindingRecyclerViewAdapter: BindingRecyclerViewAdapter<T>) : ObservableList.OnListChangedCallback<ObservableList<T>>() {
 
-        private val adapterReference by Weak<BindingRecyclerViewAdapter<T>>{bindingRecyclerViewAdapter}
+        private val adapterReference by Weak<BindingRecyclerViewAdapter<T>> { bindingRecyclerViewAdapter }
 
         override fun onChanged(sender: ObservableList<T>) {
             val adapter = adapterReference
-            adapter?.notifyDataSetChanged()
+
+            if (Looper.myLooper() == Looper.getMainLooper()) { // UI主线程
+                adapter?.notifyDataSetChanged()
+            } else { // 非UI主线程
+                Handler(Looper.getMainLooper()).post {
+                    adapter?.notifyDataSetChanged()
+                }
+            }
+
         }
 
         override fun onItemRangeChanged(sender: ObservableList<T>, positionStart: Int, itemCount: Int) {
             val adapter = adapterReference
-            adapter?.notifyItemRangeChanged(positionStart, itemCount)
+
+            if (Looper.myLooper() == Looper.getMainLooper()) { // UI主线程
+                adapter?.notifyItemRangeChanged(positionStart, itemCount)
+            } else { // 非UI主线程
+                Handler(Looper.getMainLooper()).post {
+                    adapter?.notifyItemRangeChanged(positionStart, itemCount)
+                }
+            }
+
         }
 
         override fun onItemRangeInserted(sender: ObservableList<T>, positionStart: Int, itemCount: Int) {
             val adapter = adapterReference
             adapter?.apply {
                 if (sender.isEmpty() || sender.size == itemCount && positionStart == 0) {
-                    notifyDataSetChanged()
+                    if (Looper.myLooper() == Looper.getMainLooper()) { // UI主线程
+                        notifyDataSetChanged()
+                    } else { // 非UI主线程
+                        Handler(Looper.getMainLooper()).post {
+                            notifyDataSetChanged()
+                        }
+                    }
+
                     return
                 }
-                notifyItemRangeInserted(positionStart, itemCount)
+
+                if (Looper.myLooper() == Looper.getMainLooper()) { // UI主线程
+                    notifyItemRangeInserted(positionStart, itemCount)
+                } else { // 非UI主线程
+                    Handler(Looper.getMainLooper()).post {
+                        notifyItemRangeInserted(positionStart, itemCount)
+                    }
+                }
             }
         }
 
         override fun onItemRangeMoved(sender: ObservableList<T>, fromPosition: Int, toPosition: Int, itemCount: Int) {
             val adapter = adapterReference
-            adapter?.notifyItemMoved(fromPosition, toPosition)
+
+            if (Looper.myLooper() == Looper.getMainLooper()) { // UI主线程
+                adapter?.notifyItemMoved(fromPosition, toPosition)
+            } else { // 非UI主线程
+                Handler(Looper.getMainLooper()).post {
+                    adapter?.notifyItemMoved(fromPosition, toPosition)
+                }
+            }
 
         }
 
@@ -159,10 +198,23 @@ class BindingRecyclerViewAdapter<T>(private val itemTemplate: IItemTemplate<T>, 
             val adapter = adapterReference
             adapter?.apply {
                 if (sender.isEmpty() && positionStart == 0 && itemCount > 0) {
-                    notifyDataSetChanged()
+                    if (Looper.myLooper() == Looper.getMainLooper()) { // UI主线程
+                        notifyDataSetChanged()
+                    } else { // 非UI主线程
+                        Handler(Looper.getMainLooper()).post {
+                            notifyDataSetChanged()
+                        }
+                    }
                     return
                 }
-                notifyItemRangeRemoved(positionStart, itemCount)
+                if (Looper.myLooper() == Looper.getMainLooper()) { // UI主线程
+                    notifyItemRangeRemoved(positionStart, itemCount)
+                } else { // 非UI主线程
+                    Handler(Looper.getMainLooper()).post {
+                        notifyItemRangeRemoved(positionStart, itemCount)
+                    }
+                }
+
             }
         }
     }
