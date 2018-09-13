@@ -180,7 +180,7 @@ open class ResponseModel( jsonStr: String? = null, responseBean: Any? = null)
 
     private fun <T> getPropertyInJson(jsonObject: JSONObject?, keyString: String): T?
     {
-        if (TextUtils.isEmpty(keyString) || jsonObject == null) return null
+        if (keyString.isEmpty() || jsonObject == null) return null
         try
         {
             @Suppress("UNCHECKED_CAST")
@@ -203,10 +203,10 @@ open class ResponseModel( jsonStr: String? = null, responseBean: Any? = null)
     @Suppress("UNCHECKED_CAST")
     fun <T> getPropertyInJson(keyString: String, vararg pKeyString: String): T?
     {
-        if (TextUtils.isEmpty(keyString) || getResponseJsonObject() == null) return null
+        if (keyString.isEmpty() || getResponseJsonObject() == null) return null
         if (pKeyString.isEmpty())
         {
-            return getPropertyInJson<Any>(getResponseJsonObject(), keyString) as T?
+            return getPropertyInJson<T?>(getResponseJsonObject(), keyString)
         } else
         {
             var jsonObject = getResponseJsonObject()

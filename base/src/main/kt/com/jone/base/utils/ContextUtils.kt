@@ -27,6 +27,7 @@ object ContextUtils {
         ctx.startActivity(createIntent(ctx, activity, params))
     }
 
+
     @JvmStatic
     fun startActivityForResult(
             act: Activity,

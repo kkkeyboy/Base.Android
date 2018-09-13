@@ -6,7 +6,7 @@
         android:supportsRtl="true">
         <provider
             android:name=".InitializationHelper"
-            android:authorities="com.jone.base.impl.json.InitializationHelper"
+            android:authorities="${applicationId}.com.jone.base.impl.json.InitializationHelper"
             android:exported="false" />
     </application>
 

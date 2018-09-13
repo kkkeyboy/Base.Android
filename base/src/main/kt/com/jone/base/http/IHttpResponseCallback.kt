@@ -17,5 +17,5 @@ interface IHttpResponseCallback {
 
     fun onProgress(progress: Float)
 
-    fun getResponseModelType(): Class<*>
+    fun getResponseModelType(): Class<*>?
 }

@@ -33,6 +33,12 @@ class MainActivity : AppCompatActivity()
 
                     LogUtils.i(response)
             })
+
+//            HttpHelper.get("https://blockchain.info/rawaddr/1A53L872wUQMWi1aLzFWWGYgKoLaYadyAb").execute(CommonResponseCallback.responseCallback<BaseResponseBean> { response ->
+//               val final_balance = response.getResponseJsonObject()?.getLong("final_balance")
+//                response.getPropertyInJson<Long>("final_balance")
+//                LogUtils.i(response)
+//            })
         }
     }
 
