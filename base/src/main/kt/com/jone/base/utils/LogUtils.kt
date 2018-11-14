@@ -13,6 +13,8 @@ object LogUtils
     private var isLog = true
     private var defaultTag = "UuU"
 
+    @JvmOverloads
+    @JvmStatic
     fun init(context: Context, tag: String = defaultTag, isLog: Boolean = context.isDebug())
     {
         this.isLog = isLog
