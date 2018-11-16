@@ -4,6 +4,9 @@ import android.content.Context
 import android.databinding.BindingAdapter
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.view.ViewPager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Selection
@@ -14,6 +17,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.jone.base.adapter.RecyclerHeaderAndFooterAdapter
+import com.jone.base.binding.adapter.BindingPagerAdapter
 import com.jone.base.binding.adapter.BindingRecyclerViewAdapter
 import com.jone.base.binding.adapter.BindingSectionedRecyclerViewAdapter
 import com.jone.base.binding.adapter.binder.IItemTemplate
@@ -246,6 +250,14 @@ object CustomViewBindings {
             }
             false
         }
+    }
+    //endregion
+
+    //region viewPager
+    @JvmStatic
+    @BindingAdapter(value = *arrayOf("itemSource", "fragmentManager"), requireAll = true)
+    fun bindViewPager(view: ViewPager, itemSource: Collection<Fragment>, fragmentManager: FragmentManager) {
+        view.adapter = BindingPagerAdapter(fm = fragmentManager,items = itemSource)
     }
     //endregion
 }

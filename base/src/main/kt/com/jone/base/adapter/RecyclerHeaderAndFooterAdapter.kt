@@ -72,7 +72,7 @@ class RecyclerHeaderAndFooterAdapter<VH:RecyclerView.ViewHolder>(targetAdapter: 
         return footerView != null
     }
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?)
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView)
     {
         super.onAttachedToRecyclerView(recyclerView)
         layoutManager = recyclerView!!.layoutManager

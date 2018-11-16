@@ -138,7 +138,7 @@ class BindingSectionedRecyclerViewAdapter<in TPNode, TCNode>(private val itemTem
         return isFooter!![position]
     }
 
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?) {
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         itemSectioned?.removeOnListChangedCallback(onListChangedCallback)
     }
 

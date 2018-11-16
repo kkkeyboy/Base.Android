@@ -61,7 +61,7 @@ class BindingRecyclerViewAdapter<T>(private val itemTemplate: IItemTemplate<T>, 
         }
     }
 
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?) {
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         items?.apply { removeOnListChangedCallback(onListChangedCallback) }
     }
 

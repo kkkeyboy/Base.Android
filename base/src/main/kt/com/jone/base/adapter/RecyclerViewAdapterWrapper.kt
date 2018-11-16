@@ -52,22 +52,22 @@ open class RecyclerViewAdapterWrapper<VH:RecyclerView.ViewHolder>(protected val 
         return wrappedAdapter.getItemId(position)
     }
 
-    override fun onViewRecycled(holder: VH?)
+    override fun onViewRecycled(holder: VH)
     {
         wrappedAdapter.onViewRecycled(holder)
     }
 
-    override fun onFailedToRecycleView(holder: VH?): Boolean
+    override fun onFailedToRecycleView(holder: VH): Boolean
     {
         return wrappedAdapter.onFailedToRecycleView(holder)
     }
 
-    override fun onViewAttachedToWindow(holder: VH?)
+    override fun onViewAttachedToWindow(holder: VH)
     {
         wrappedAdapter.onViewAttachedToWindow(holder)
     }
 
-    override fun onViewDetachedFromWindow(holder: VH?)
+    override fun onViewDetachedFromWindow(holder: VH)
     {
         wrappedAdapter.onViewDetachedFromWindow(holder)
     }
@@ -82,12 +82,12 @@ open class RecyclerViewAdapterWrapper<VH:RecyclerView.ViewHolder>(protected val 
         wrappedAdapter.unregisterAdapterDataObserver(observer)
     }
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?)
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView)
     {
         wrappedAdapter.onAttachedToRecyclerView(recyclerView)
     }
 
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?)
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView)
     {
         wrappedAdapter.onDetachedFromRecyclerView(recyclerView)
         wrappedAdapter.unregisterAdapterDataObserver(AdapterChangedCallback)

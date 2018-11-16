@@ -9,6 +9,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import com.jone.base.utils.ContextUtils
 
+
 //region activity相关操作
 
 inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<String, Any?>) =
@@ -42,20 +43,20 @@ inline fun <reified T : Any> Fragment.intentFor(vararg params: Pair<String, Any?
         ContextUtils.createIntent(activity, T::class.java, params)
 
 inline fun <reified T : Activity> android.support.v4.app.Fragment.startActivity(vararg params: Pair<String, Any?>) =
-        ContextUtils.startActivity(activity, T::class.java, params)
+        ContextUtils.startActivity(context!!, T::class.java, params)
 
 inline fun <reified T : Activity> android.support.v4.app.Fragment.startActivityForResult(requestCode: Int, vararg params: Pair<String, Any?>) =
-        startActivityForResult(ContextUtils.createIntent(activity, T::class.java, params), requestCode)
+        startActivityForResult(ContextUtils.createIntent(context!!, T::class.java, params), requestCode)
 
 inline fun <reified T : Service> android.support.v4.app.Fragment.startService(vararg params: Pair<String, Any?>) =
-        ContextUtils.startService(activity, T::class.java, params)
+        ContextUtils.startService(context!!, T::class.java, params)
 
 
 inline fun <reified T : Service> android.support.v4.app.Fragment.stopService(vararg params: Pair<String, Any?>) =
-        ContextUtils.stopService(activity, T::class.java, params)
+        ContextUtils.stopService(context!!, T::class.java, params)
 
 inline fun <reified T : Any> android.support.v4.app.Fragment.intentFor(vararg params: Pair<String, Any?>): Intent =
-        ContextUtils.createIntent(activity, T::class.java, params)
+        ContextUtils.createIntent(context!!, T::class.java, params)
 
 //endregion
 
@@ -86,6 +87,37 @@ fun <T> Context.getApplicationMetaData(metaName: String): T? {
         return null
     }
 
+}
+
+
+/**
+ * get App versionCode
+ * @param context
+ * @return
+ */
+fun Context.getVersionCode(): Int {
+    try {
+        return this.packageManager.getPackageInfo(this.packageName, 0).versionCode
+    } catch (e: PackageManager.NameNotFoundException) {
+        e.printStackTrace()
+    }
+
+    return 0
+}
+
+/**
+ * get App versionName
+ * @param context
+ * @return
+ */
+fun Context.getVersionName(): String {
+    try {
+        return this.packageManager.getPackageInfo(this.packageName, 0).versionName
+    } catch (e: PackageManager.NameNotFoundException) {
+        e.printStackTrace()
+    }
+
+    return ""
 }
 
 
