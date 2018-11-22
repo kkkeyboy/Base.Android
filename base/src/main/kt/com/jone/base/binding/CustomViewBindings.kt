@@ -1,9 +1,7 @@
 package com.jone.base.binding
 
 import android.content.Context
-import android.databinding.BindingAdapter
-import android.databinding.DataBindingUtil
-import android.databinding.ViewDataBinding
+import android.databinding.*
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.view.ViewPager
@@ -259,5 +257,50 @@ object CustomViewBindings {
     fun bindViewPager(view: ViewPager, itemSource: Collection<Fragment>, fragmentManager: FragmentManager) {
         view.adapter = BindingPagerAdapter(fm = fragmentManager,items = itemSource)
     }
+
+        //region 实现双向绑定
+    @JvmStatic
+    @BindingAdapter(value = "currentPage")
+    fun bindViewPagerSetCurrentPage(view: ViewPager, currentPage: Int) {
+        if(view.currentItem != currentPage)
+        {
+            view.currentItem = currentPage
+        }
+    }
+
+    @JvmStatic
+    @InverseBindingAdapter(attribute = "currentPage", event = "currentPageAttrChanged")
+    fun bindViewPagerGetCurrentPage(view: ViewPager): Int
+    {
+        return view.currentItem
+    }
+
+    @JvmStatic
+    @BindingAdapter(value =  "currentPageAttrChanged")
+    fun setCurrentPageAttrChanged(view: ViewPager, inverseBindingListener: InverseBindingListener?)
+    {
+        inverseBindingListener?.let { inverseBindingListener ->
+            inverseBindingListener.onChange()
+            view.addOnPageChangeListener(object : ViewPager.OnPageChangeListener
+            {
+                val bindingListener=java.lang.ref.WeakReference(inverseBindingListener)
+                override fun onPageSelected(p0: Int)
+                {
+                    val listener = bindingListener.get()
+                    listener?.onChange()
+                }
+
+                override fun onPageScrollStateChanged(p0: Int)
+                {
+                }
+
+                override fun onPageScrolled(p0: Int, p1: Float, p2: Int)
+                {
+                }
+            })
+        }
+    }
+    //endregion
+
     //endregion
 }
