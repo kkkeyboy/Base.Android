@@ -12,7 +12,7 @@ object JsonHelper : JsonHelperProtocol {
         return try {
             JsonHelperStrategy.jsonHelperImpl!!.convertJsonToList(json, clazz)
         } catch (e: Exception) {
-            e.log("JsonHelper")
+            e.log("JsonHelper $e")
             null
         }
     }
@@ -21,7 +21,7 @@ object JsonHelper : JsonHelperProtocol {
         return try {
             JsonHelperStrategy.jsonHelperImpl!!.convertJsonToObject(json, clazz)
         } catch (e: Exception) {
-            e.log("JsonHelper")
+            e.log("JsonHelper $e")
             null
         }
     }
@@ -30,7 +30,7 @@ object JsonHelper : JsonHelperProtocol {
         return try {
             JsonHelperStrategy.jsonHelperImpl!!.convertObjectToJson(obj)
         } catch (e: Exception) {
-            e.log("JsonHelper")
+            e.log("JsonHelper $e")
             null
         }
     }

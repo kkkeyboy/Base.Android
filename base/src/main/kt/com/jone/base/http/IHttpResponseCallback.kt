@@ -7,7 +7,7 @@ interface IHttpResponseCallback {
 
     val isSuccess: Boolean
 
-    fun onPreExecute(params: RequestParams)
+    fun onPreExecute()
 
     fun onSuccess(responseModel: ResponseModel)
 
