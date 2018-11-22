@@ -4,6 +4,7 @@ import android.arch.lifecycle.DefaultLifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
+import android.os.Looper
 import android.support.v4.util.ArrayMap
 import android.support.v4.util.ArraySet
 import android.util.Log
@@ -155,7 +156,8 @@ inline fun <reified T : Any> LiveDataEventBus.unregister(owner: LifecycleOwner) 
 
 
 //发送消息
-fun LiveDataEventBus.post(event: Any, isRunOnUI: Boolean = false) {
+fun LiveDataEventBus.post(event: Any) {
+    val isRunOnUI = Looper.getMainLooper().getThread() == Thread.currentThread()
     (getLiveData(event.javaClass.name) as? MutableLiveData<Any>)?.let { if (isRunOnUI) it.postValue(event) else it.value = event }
 }
 
