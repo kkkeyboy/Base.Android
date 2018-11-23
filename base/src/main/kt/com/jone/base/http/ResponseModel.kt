@@ -165,7 +165,7 @@ open class ResponseModel( jsonStr: String? = null, responseBean: Any? = null)
             }
             return if (jsonObject != null)
             {
-                getObjectInJson<T>(getResponseJsonObject(), keyString, cls)
+                getObjectInJson<T>(jsonObject, keyString, cls)
             } else null
         }
     }
