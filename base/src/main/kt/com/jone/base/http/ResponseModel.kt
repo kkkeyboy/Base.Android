@@ -117,10 +117,7 @@ open class ResponseModel( jsonStr: String? = null, responseBean: Any? = null)
                     return null
                 }
             }
-            return if (jsonObject != null)
-            {
-                getListObjectInJson<T>(getResponseJsonObject(), keyString, cls)
-            } else null
+            return  getListObjectInJson<T>(jsonObject, keyString, cls)
         }
     }
 
