@@ -32,7 +32,7 @@ object CustomViewBindings {
     //region Command
     @JvmStatic
     @BindingAdapter(value = *arrayOf("command", "commandParameter"), requireAll = false)
-    fun bindViewCommandWithParameter(view: RecyclerView, command: ICommand, commandParameter: Any?) {
+    fun bindViewCommandWithParameter(view: View, command: ICommand, commandParameter: Any?) {
         if(command is BaseCommandWithContext<*>)
         {
             command.ctx = view.context
