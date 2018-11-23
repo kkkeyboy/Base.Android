@@ -32,7 +32,7 @@ object CustomViewBindings {
     //region Command
     @JvmStatic
     @BindingAdapter(value = *arrayOf("command", "commandParameter"), requireAll = false)
-    fun bindViewCommandWithParameter(view: View, command: ICommand, commandParameter: Any?) {
+    fun bindViewCommandWithParameter(view: RecyclerView, command: ICommand, commandParameter: Any?) {
         if(command is BaseCommandWithContext<*>)
         {
             command.ctx = view.context
@@ -53,7 +53,7 @@ object CustomViewBindings {
     @JvmStatic
     @BindingAdapter(value = *arrayOf("itemSource", "itemTemplate", "itemClickCommand", "itemLongClickCommand", "header", "headerBR", "headerViewModel", "footer", "footerBR", "footerViewModel"),
             requireAll = false)
-    fun <T> bindRecyclerViewBinder(view: View,
+    fun <T> bindRecyclerViewBinder(recyclerView: RecyclerView,
                                    itemSource: Collection<T>,
                                    itemTemplate: IItemTemplate<T>,
                                    clickHandler: ICommand?,
@@ -64,8 +64,6 @@ object CustomViewBindings {
                                    footerLayout: Int,
                                    footerBR: Int,
                                    footerViewModel: Any?) {
-        val recyclerView = view as RecyclerView
-
         if (recyclerView.layoutManager == null) {
             //            throw new NullPointerException("Not find recyclerView's layoutManager");
             recyclerView.layoutManager = LinearLayoutManager(recyclerView.context, LinearLayoutManager.VERTICAL, false)
@@ -132,7 +130,7 @@ object CustomViewBindings {
             "footerViewModel",
             "variableViewModel",
             "variableBR"), requireAll = false)
-    fun <T> bindRecyclerViewBinderWithClickHasHeaderFooter(view: View,
+    fun <T> bindRecyclerViewBinderWithClickHasHeaderFooter(view: RecyclerView,
                                                            itemSource: Collection<T>,
                                                            itemTemplateId: Int,
                                                            itemTemplateBR: Int,
@@ -160,7 +158,7 @@ object CustomViewBindings {
     //region 分片式的（数据源式包含关系但是展现是在一级
     @JvmStatic
     @BindingAdapter(value = *arrayOf("itemSource", "itemTemplate", "itemClickCommand", "itemLongClickCommand"), requireAll = false)
-    fun <T, TC> bindRecyclerViewBinder(view: View,
+    fun <T, TC> bindRecyclerViewBinder(view: RecyclerView,
                                        itemSource: Collection<T>,
                                        itemTemplate: ISectionedItemTemplate<T, TC>,
                                        clickHandler: ICommand?,
