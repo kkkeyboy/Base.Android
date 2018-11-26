@@ -10,7 +10,7 @@ import org.json.JSONObject
 /**
  * Created by Jone.L on 2017/12/4.
  */
-open class ResponseModel( jsonStr: String? = null, responseBean: Any? = null)
+open class ResponseModel(jsonStr: String? = null, responseBean: Any? = null)
 {
     var jsonStr: String = "" //// 返回的原始数据
         internal set(value)
@@ -22,7 +22,7 @@ open class ResponseModel( jsonStr: String? = null, responseBean: Any? = null)
 
     init
     {
-        this.jsonStr = jsonStr?:""
+        this.jsonStr = jsonStr ?: ""
         this.responseBean = responseBean
     }
 
@@ -66,7 +66,8 @@ open class ResponseModel( jsonStr: String? = null, responseBean: Any? = null)
                 try
                 {
                     jsonObject = JSONObject(jsonStr)
-                } catch (e: JSONException)
+                }
+                catch (e: JSONException)
                 {
                     e.printStackTrace()
                 }
@@ -76,19 +77,21 @@ open class ResponseModel( jsonStr: String? = null, responseBean: Any? = null)
     }
 
 
+    //region List
     /**
      * 获取list
      */
-    private fun <T> getListObjectInJson(jsonObject: JSONObject?, keyString: String, cls: Class<T>): List<T>?
+    private fun <T> getListObjectInJsonImpl(jsonObject: JSONObject?, keyString: String, cls: Class<T>): List<T>?
     {
         if (TextUtils.isEmpty(keyString) || jsonObject == null) return null
-        try
+        return try
         {
-            return if (jsonObject.isNull(keyString)) null else JsonHelper.convertJsonToList<T>(jsonObject.getString(keyString), cls)
-        } catch (e: Exception)
+            if (jsonObject.isNull(keyString)) null else JsonHelper.tryConvertJsonToList<T>(jsonObject.getString(keyString), cls)
+        }
+        catch (e: Exception)
         {
             e.printStackTrace()
-            return null
+            null
         }
 
     }
@@ -105,36 +108,49 @@ open class ResponseModel( jsonStr: String? = null, responseBean: Any? = null)
         if (TextUtils.isEmpty(keyString) || getResponseJsonObject() == null) return null
         if (pKeyString.isEmpty())
         {
-            return getListObjectInJson<T>(getResponseJsonObject(), keyString, cls)
-        } else
+            return getListObjectInJsonImpl<T>(getResponseJsonObject(), keyString, cls)
+        }
+        else
         {
             var jsonObject = getResponseJsonObject()
             for (pKey in pKeyString)
             {
-                jsonObject = getPropertyInJson<JSONObject>(jsonObject, pKey)
+                jsonObject = getPropertyInJsonImpl<JSONObject>(jsonObject, pKey)
                 if (jsonObject == null)
                 {
                     return null
                 }
             }
-            return if (jsonObject != null)
-            {
-                getListObjectInJson<T>(getResponseJsonObject(), keyString, cls)
-            } else null
+            return getListObjectInJsonImpl<T>(jsonObject, keyString, cls)
         }
     }
 
+    /**
+     * 获取list
+     *
+     * @param keyString
+     * @param pKeyString 父节点key
+     * @return
+     */
+    inline fun <reified T> getListObjectInJson(keyString: String, vararg pKeyString: String): List<T>?
+    {
+        return getListObjectInJson<T>(keyString, T::class.java, *pKeyString)
+    }
+    //endregion
 
+
+    //region Object
     /**
      * 获取对象
      */
-    private fun <T> getObjectInJson(jsonObject: JSONObject?, keyString: String, cls: Class<T>): T?
+    private fun <T> getObjectInJsonImpl(jsonObject: JSONObject?, keyString: String, cls: Class<T>): T?
     {
         if (TextUtils.isEmpty(keyString) || jsonObject == null) return null
         try
         {
-            return if (jsonObject.isNull(keyString)) null else JsonHelper.convertJsonToObject(jsonObject.getString(keyString), cls)
-        } catch (e: Exception)
+            return if (jsonObject.isNull(keyString)) null else JsonHelper.tryConvertJsonToObject(jsonObject.getString(keyString), cls)
+        }
+        catch (e: Exception)
         {
             LogUtils.e(e)
             return null
@@ -154,13 +170,14 @@ open class ResponseModel( jsonStr: String? = null, responseBean: Any? = null)
         if (TextUtils.isEmpty(keyString) || getResponseJsonObject() == null) return null
         if (pKeyString.isEmpty())
         {
-            return getObjectInJson<T>(getResponseJsonObject(), keyString, cls)
-        } else
+            return getObjectInJsonImpl<T>(getResponseJsonObject(), keyString, cls)
+        }
+        else
         {
             var jsonObject = getResponseJsonObject()
             for (pKey in pKeyString)
             {
-                jsonObject = getPropertyInJson<JSONObject>(jsonObject, pKey)
+                jsonObject = getPropertyInJsonImpl<JSONObject>(jsonObject, pKey)
                 if (jsonObject == null)
                 {
                     return null
@@ -168,24 +185,39 @@ open class ResponseModel( jsonStr: String? = null, responseBean: Any? = null)
             }
             return if (jsonObject != null)
             {
-                getObjectInJson<T>(getResponseJsonObject(), keyString, cls)
-            } else null
+                getObjectInJsonImpl<T>(jsonObject, keyString, cls)
+            }
+            else null
         }
     }
 
+    /**
+     * 获取对象
+     *
+     * @param keyString
+     * @param pKeyString 父节点key
+     * @return
+     */
+    inline fun <reified T> getObjectInJson(keyString: String, vararg pKeyString: String): T?
+    {
+        return getObjectInJson(keyString, T::class.java, *pKeyString)
+    }
+    //endregion
 
+
+    //region Property
     /**
      * 根据key单独内容(属性,不是转换为Class)
      */
 
-    private fun <T> getPropertyInJson(jsonObject: JSONObject?, keyString: String): T?
+    private fun <T> getPropertyInJsonImpl(jsonObject: JSONObject?, keyString: String): T?
     {
         if (keyString.isEmpty() || jsonObject == null) return null
         try
         {
-            @Suppress("UNCHECKED_CAST")
-            return if (jsonObject.isNull(keyString)) null else jsonObject.get(keyString) as T
-        } catch (e: JSONException)
+            @Suppress("UNCHECKED_CAST") return if (jsonObject.isNull(keyString)) null else jsonObject.get(keyString) as T
+        }
+        catch (e: JSONException)
         {
             e.printStackTrace()
             return null
@@ -206,13 +238,14 @@ open class ResponseModel( jsonStr: String? = null, responseBean: Any? = null)
         if (keyString.isEmpty() || getResponseJsonObject() == null) return null
         if (pKeyString.isEmpty())
         {
-            return getPropertyInJson<T?>(getResponseJsonObject(), keyString)
-        } else
+            return getPropertyInJsonImpl<T?>(getResponseJsonObject(), keyString)
+        }
+        else
         {
             var jsonObject = getResponseJsonObject()
             for (pKey in pKeyString)
             {
-                jsonObject = getPropertyInJson<JSONObject>(jsonObject, pKey)
+                jsonObject = getPropertyInJsonImpl<JSONObject>(jsonObject, pKey)
                 if (jsonObject == null)
                 {
                     return null
@@ -220,10 +253,12 @@ open class ResponseModel( jsonStr: String? = null, responseBean: Any? = null)
             }
             return if (jsonObject != null)
             {
-                getPropertyInJson<Any>(jsonObject, keyString) as T?
-            } else null
+                getPropertyInJsonImpl<Any>(jsonObject, keyString) as T?
+            }
+            else null
         }
     }
+    //endregion
 
 
     override fun toString(): String

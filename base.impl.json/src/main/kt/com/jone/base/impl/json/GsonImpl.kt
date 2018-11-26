@@ -1,6 +1,8 @@
 package com.jone.base.impl.json
 
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
+import com.google.gson.reflect.TypeToken
 
 /**
  * Created by Jone on 2018/4/16.
@@ -14,8 +16,9 @@ class GsonImpl : com.jone.base.json.JsonHelperProtocol {
     }
 
     override fun <T> convertJsonToList(json: String, clazz: Class<T>): List<T> {
-        val listClass = ArrayList<T>()
-        return mGson!!.fromJson(json, listClass.javaClass)
+//        val type = object : TypeToken<ArrayList<T>>() {}.type
+//        return mGson!!.fromJson<List<T>>(json, type)
+        return JsonParser().parse(json).asJsonArray.flatMap { listOf(mGson!!.fromJson(it, clazz)) }
     }
 
     override fun <T> convertJsonToObject(json: String, clazz: Class<T>): T {
