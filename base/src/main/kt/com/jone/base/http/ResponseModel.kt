@@ -182,7 +182,7 @@ open class ResponseModel( jsonStr: String? = null, responseBean: Any? = null)
         {
             @Suppress("UNCHECKED_CAST")
             return if (jsonObject.isNull(keyString)) null else jsonObject.get(keyString) as T
-        } catch (e: JSONException)
+        } catch (e: java.lang.Exception)
         {
             e.printStackTrace()
             return null
