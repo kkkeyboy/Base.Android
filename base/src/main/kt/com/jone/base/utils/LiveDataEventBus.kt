@@ -133,15 +133,17 @@ inline fun <reified T : Any> LiveDataEventBus.isRegistered(owner: LifecycleOwner
 }
 
 //注册事件
-inline fun <reified T : Any> LiveDataEventBus.register(owner: LifecycleOwner, isObserverForever: Boolean = false, needCurrentDataWhenNewObserve: Boolean = false, crossinline observerBlock: (changedData: T) -> Unit): MutableLiveData<T> {
-    return registerWithKeyPair<T>(owner, T::class.java.name, needCurrentDataWhenNewObserve).let { liveData ->
+inline fun <reified T : Any> LiveDataEventBus.register(owner: LifecycleOwner,messageEventName:String = T::class.java.name, isObserverForever: Boolean = false, needCurrentDataWhenNewObserve: Boolean = false, crossinline observerBlock: (changedData: T) -> Unit): MutableLiveData<T> {
+    return registerWithKeyPair<T>(owner,messageEventName , needCurrentDataWhenNewObserve).let { liveData ->
         if (isObserverForever) {
             liveData.observeForever {
                 it?.let(observerBlock)
             }
         } else {
             liveData.observe(owner, Observer<T> {
-                it?.let(observerBlock)
+                it?.apply {
+                    observerBlock.invoke(this)
+                }
             })
         }
 
@@ -156,8 +158,8 @@ inline fun <reified T : Any> LiveDataEventBus.unregister(owner: LifecycleOwner) 
 
 
 //发送消息
-fun LiveDataEventBus.post(event: Any) {
+fun LiveDataEventBus.post(event: Any,messageEventName:String = event.javaClass.name) {
     val isRunOnUI = Looper.getMainLooper().getThread() == Thread.currentThread()
-    (getLiveData(event.javaClass.name) as? MutableLiveData<Any>)?.let { if (isRunOnUI) it.postValue(event) else it.value = event }
+    (getLiveData(messageEventName) as? MutableLiveData<Any>)?.let { if (isRunOnUI) it.postValue(event) else it.value = event }
 }
 

@@ -19,7 +19,7 @@ import com.jone.base.utils.Weak
  * 常用的recyclerView adapter
  */
 
-class BindingRecyclerViewAdapter<T>(private val itemTemplate: IItemTemplate<T>, items: Collection<T>?) : RecyclerView.Adapter<BindingRecyclerViewAdapter.ViewHolder>(), View.OnClickListener, View.OnLongClickListener {
+open class BindingRecyclerViewAdapter<T>(private val itemTemplate: IItemTemplate<T>, items: Collection<T>?) : RecyclerView.Adapter<BindingRecyclerViewAdapter.ViewHolder>(), View.OnClickListener, View.OnLongClickListener {
     companion object {
         private const val ITEM_POSITION = -124
     }
