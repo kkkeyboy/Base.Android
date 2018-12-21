@@ -33,8 +33,7 @@ object CustomViewBindings {
     @JvmStatic
     @BindingAdapter(value = *arrayOf("command", "commandParameter"), requireAll = false)
     fun bindViewCommandWithParameter(view: View, command: ICommand, commandParameter: Any?) {
-        if(command is BaseCommandWithContext<*>)
-        {
+        if (command is BaseCommandWithContext<*>) {
             command.ctx = view.context
         }
         view.setOnClickListener { _ ->
@@ -51,7 +50,17 @@ object CustomViewBindings {
     //region 普通RecyclerView
 
     @JvmStatic
-    @BindingAdapter(value = *arrayOf("itemSource", "itemTemplate", "itemClickCommand", "itemLongClickCommand", "header", "headerBR", "headerViewModel", "footer", "footerBR", "footerViewModel"),
+    @BindingAdapter(value = [
+        "itemSource",
+        "itemTemplate",
+        "itemClickCommand",
+        "itemLongClickCommand",
+        "header",
+        "headerBR",
+        "headerViewModel",
+        "footer",
+        "footerBR",
+        "footerViewModel"],
             requireAll = false)
     fun <T> bindRecyclerViewBinder(recyclerView: RecyclerView,
                                    itemSource: Collection<T>,
@@ -71,9 +80,17 @@ object CustomViewBindings {
 
         val adapter = BindingRecyclerViewAdapter(itemTemplate, itemSource)
         if (clickHandler != null) {
+            if(clickHandler is BaseCommandWithContext<*>)
+            {
+                clickHandler.ctx = recyclerView.context
+            }
             adapter.setClickHandler(clickHandler)
         }
         if (longClickHandler != null) {
+            if(longClickHandler is BaseCommandWithContext<*>)
+            {
+                longClickHandler.ctx = recyclerView.context
+            }
             adapter.setLongClickHandler(longClickHandler)
         }
 
@@ -117,19 +134,20 @@ object CustomViewBindings {
     }
 
 
-    @JvmStatic
-    @BindingAdapter(value = *arrayOf("itemSource",
-            "itemTemplate",
-            "itemTemplateBR",
-            "itemClickCommand",
-            "header",
-            "headerBR",
-            "headerViewModel",
-            "footer",
-            "footerBR",
-            "footerViewModel",
-            "variableViewModel",
-            "variableBR"), requireAll = false)
+   /* @JvmStatic
+    @BindingAdapter(value = [
+        "itemSource",
+        "itemTemplate",
+        "itemTemplateBR",
+        "itemClickCommand",
+        "header",
+        "headerBR",
+        "headerViewModel",
+        "footerLayout",
+        "footerBR",
+        "footerViewModel",
+        "variableViewModel",
+        "variableBR"], requireAll = false)
     fun <T> bindRecyclerViewBinderWithClickHasHeaderFooter(view: RecyclerView,
                                                            itemSource: Collection<T>,
                                                            itemTemplateId: Int,
@@ -150,7 +168,7 @@ object CustomViewBindings {
                 }
             }
         }, itemClickCommand, null, headerLayout, headerBR, headerViewModel, footerLayout, footerBR, footerViewModel)
-    }
+    }*/
 
     //endregion
 
@@ -172,9 +190,17 @@ object CustomViewBindings {
 
         val adapter = BindingSectionedRecyclerViewAdapter(itemTemplate, itemSource)
         if (clickHandler != null) {
+            if(clickHandler is BaseCommandWithContext<*>)
+            {
+                clickHandler.ctx = view.context
+            }
             adapter.setClickHandler(clickHandler)
         }
         if (longClickHandler != null) {
+            if(longClickHandler is BaseCommandWithContext<*>)
+            {
+                longClickHandler.ctx = view.context
+            }
             adapter.setLongClickHandler(longClickHandler)
         }
         recyclerView.adapter = adapter
@@ -232,16 +258,21 @@ object CustomViewBindings {
     @BindingAdapter("keyDownCommand")
     fun setOnEditorAction(view: EditText, command: ICommand) {
         view.setOnEditorActionListener { _, actionId, keyEvent ->
-            if (keyEvent?.keyCode ?: KeyEvent.ACTION_DOWN == KeyEvent.ACTION_UP) {
+            if ((keyEvent?.keyCode ?: KeyEvent.ACTION_UP) == KeyEvent.ACTION_UP) {
                 if (actionId == view.imeOptions) {
                     if (command.canExecuteAny(null)) {
+                        if(command is BaseCommandWithContext<*>)
+                        {
+                            command.ctx = view.context
+                        }
                         //隐藏键盘
-                        val inputmanger = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        inputmanger.hideSoftInputFromWindow(view.windowToken, 0)
+//                        val inputmanger = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//                        inputmanger.hideSoftInputFromWindow(view.windowToken, 0)
+                        (view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_NOT_ALWAYS)
                         //执行操作
                         command.executeAny(null)
                     }
-                   return@setOnEditorActionListener true
+                    return@setOnEditorActionListener true
                 }
             }
             false
@@ -253,47 +284,40 @@ object CustomViewBindings {
     @JvmStatic
     @BindingAdapter(value = *arrayOf("itemSource", "fragmentManager"), requireAll = true)
     fun bindViewPager(view: ViewPager, itemSource: Collection<Fragment>, fragmentManager: FragmentManager) {
-        view.adapter = BindingPagerAdapter(fm = fragmentManager,items = itemSource)
+        view.adapter = BindingPagerAdapter(fm = fragmentManager, items = itemSource)
     }
 
-        //region 实现双向绑定
+    //region 实现双向绑定
     @JvmStatic
     @BindingAdapter(value = "currentPage")
     fun bindViewPagerSetCurrentPage(view: ViewPager, currentPage: Int) {
-        if(view.currentItem != currentPage)
-        {
+        if (view.currentItem != currentPage) {
             view.currentItem = currentPage
         }
     }
 
     @JvmStatic
     @InverseBindingAdapter(attribute = "currentPage", event = "currentPageAttrChanged")
-    fun bindViewPagerGetCurrentPage(view: ViewPager): Int
-    {
+    fun bindViewPagerGetCurrentPage(view: ViewPager): Int {
         return view.currentItem
     }
 
     @JvmStatic
-    @BindingAdapter(value =  "currentPageAttrChanged")
-    fun setCurrentPageAttrChanged(view: ViewPager, inverseBindingListener: InverseBindingListener?)
-    {
+    @BindingAdapter(value = "currentPageAttrChanged")
+    fun setCurrentPageAttrChanged(view: ViewPager, inverseBindingListener: InverseBindingListener?) {
         inverseBindingListener?.let { inverseBindingListener ->
             inverseBindingListener.onChange()
-            view.addOnPageChangeListener(object : ViewPager.OnPageChangeListener
-            {
-                val bindingListener=java.lang.ref.WeakReference(inverseBindingListener)
-                override fun onPageSelected(p0: Int)
-                {
+            view.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                val bindingListener = java.lang.ref.WeakReference(inverseBindingListener)
+                override fun onPageSelected(p0: Int) {
                     val listener = bindingListener.get()
                     listener?.onChange()
                 }
 
-                override fun onPageScrollStateChanged(p0: Int)
-                {
+                override fun onPageScrollStateChanged(p0: Int) {
                 }
 
-                override fun onPageScrolled(p0: Int, p1: Float, p2: Int)
-                {
+                override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
                 }
             })
         }

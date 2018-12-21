@@ -10,21 +10,6 @@ import com.jone.base.BR
  */
 
 abstract class LoadDataCommand : BaseCommand<LoadDataCommand.ILoadingCallback>() {
-    companion object
-    {
-        fun  commandWithLoadData(canExecuteBlock: LoadDataCommand.(commandParameter: LoadDataCommand.ILoadingCallback) -> Boolean = { _ -> BaseCommand@ this.isEnable && !BaseCommand@ this.isRefreshing }, executeBlock: LoadDataCommand.(commandParameter: LoadDataCommand.ILoadingCallback) -> Unit): LoadDataCommand {
-            return object : LoadDataCommand() {
-                override fun execute(commandParameter: LoadDataCommand.ILoadingCallback) {
-                    executeBlock.invoke(this, commandParameter)
-                }
-
-                override fun canExecute(commandParameter: LoadDataCommand.ILoadingCallback): Boolean {
-                    return canExecuteBlock.invoke(this, commandParameter)
-                }
-            }
-        }
-    }
-
     //加载更多模式
     @get:Bindable
     var isLoadMore: Boolean = false
