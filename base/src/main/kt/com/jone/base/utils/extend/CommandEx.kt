@@ -28,7 +28,7 @@ fun <T> commandWithContext(canExecuteBlock: BaseCommand<T>.(commandParameter: T)
     }
 }
 
-fun  commandWithLoadData(canExecuteBlock: LoadDataCommand.(commandParameter: LoadDataCommand.ILoadingCallback) -> Boolean = { _ -> BaseCommand@ this.isEnable && !BaseCommand@ this.isRefreshing }, executeBlock: LoadDataCommand.(commandParameter: LoadDataCommand.ILoadingCallback) -> Unit): LoadDataCommand {
+fun  commandWithLoadData(canExecuteBlock: LoadDataCommand.(commandParameter: LoadDataCommand.ILoadingCallback) -> Boolean = { _ -> true }, executeBlock: LoadDataCommand.(commandParameter: LoadDataCommand.ILoadingCallback) -> Unit): LoadDataCommand {
     return object : LoadDataCommand() {
         override fun execute(commandParameter: LoadDataCommand.ILoadingCallback) {
             executeBlock.invoke(this, commandParameter)

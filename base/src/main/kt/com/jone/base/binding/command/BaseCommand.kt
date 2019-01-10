@@ -11,7 +11,10 @@ import android.databinding.Bindable
 import com.jone.base.BR
 
 
-abstract class BaseCommand<in T : Any?> : BaseObservable(), ICommand {
+abstract class BaseCommand<T : Any?> : BaseObservable(), ICommand {
+
+    var executeCallback : ICommandExecuteCallback<T>?=null
+
     override var isEnable: Boolean = true
         set(value: Boolean) {
             field = value
@@ -30,6 +33,7 @@ abstract class BaseCommand<in T : Any?> : BaseObservable(), ICommand {
     @Suppress("UNCHECKED_CAST")
     final override fun executeAny(commandParameter: Any?) {
         execute(commandParameter as T)
+        executeCallback?.onExecuted(commandParameter as T)
     }
 
     open fun canExecute(commandParameter: T) = this.isEnable && !this.isRefreshing

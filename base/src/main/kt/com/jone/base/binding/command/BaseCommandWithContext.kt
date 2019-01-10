@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import com.jone.base.utils.ContextUtils
 
-abstract class BaseCommandWithContext<in T : Any?> : BaseCommand<T>() {
+abstract class BaseCommandWithContext<T : Any?> : BaseCommand<T>() {
     var ctx: Context? = null
         internal set(value) {
             field = value

@@ -24,5 +24,4 @@ interface ICommand: Observable{
      * 检查是否能执行
      */
     fun canExecuteAny(commandParameter: Any?): Boolean
-
 }

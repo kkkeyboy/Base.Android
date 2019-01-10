@@ -7,7 +7,6 @@ import android.arch.lifecycle.Observer
 import android.os.Looper
 import android.support.v4.util.ArrayMap
 import android.support.v4.util.ArraySet
-import android.util.Log
 
 
 object LiveDataEventBus {
@@ -44,19 +43,19 @@ object LiveDataEventBus {
     }
 
 
-    fun <T> registerWithKeyPair(owner: LifecycleOwner, messageEventName: String, needCurrentDataWhenNewObserve: Boolean = false): MutableLiveData<T> {
-        return this.registerInfo(owner, messageEventName, needCurrentDataWhenNewObserve)
+    fun <T> registerWithKeyPair(owner: LifecycleOwner, messageEventName: String,messageCacheName:String, needCurrentDataWhenNewObserve: Boolean = false): MutableLiveData<T> {
+        return this.registerInfo(owner, messageEventName,messageCacheName, needCurrentDataWhenNewObserve)
     }
 
-    private fun <T> registerInfo(owner: LifecycleOwner, messageEventName: String, needCurrentDataWhenNewObserve: Boolean): MutableLiveData<T> {
+    private fun <T> registerInfo(owner: LifecycleOwner, messageEventName: String,messageCacheName:String, needCurrentDataWhenNewObserve: Boolean): MutableLiveData<T> {
         //缓存key不包含订阅者
         val keysKey = owner.javaClass.name
         if (!mCacheKeys.containsKey(keysKey)) {
             val setTmp = ArraySet<String>()
-            mCacheKeys[keysKey] = setTmp.apply { add(messageEventName) }
+            mCacheKeys[keysKey] = setTmp.apply { add(messageCacheName) }
             owner.lifecycle.addObserver(LifecycleWatcher())
-        } else if (!mCacheKeys[keysKey]!!.contains(messageEventName)) {
-            mCacheKeys[keysKey]!!.apply { add(messageEventName) }
+        } else if (!mCacheKeys[keysKey]!!.contains(messageCacheName)) {
+            mCacheKeys[keysKey]!!.apply { add(messageCacheName) }
         }
 
         //存储订阅消息
@@ -133,8 +132,8 @@ inline fun <reified T : Any> LiveDataEventBus.isRegistered(owner: LifecycleOwner
 }
 
 //注册事件
-inline fun <reified T : Any> LiveDataEventBus.register(owner: LifecycleOwner,messageEventName:String = T::class.java.name, isObserverForever: Boolean = false, needCurrentDataWhenNewObserve: Boolean = false, crossinline observerBlock: (changedData: T) -> Unit): MutableLiveData<T> {
-    return registerWithKeyPair<T>(owner,messageEventName , needCurrentDataWhenNewObserve).let { liveData ->
+inline fun <reified T : Any> LiveDataEventBus.register(owner: LifecycleOwner,messageEventName:String = T::class.java.name, messageCacheName:String = messageEventName,isObserverForever: Boolean = false, needCurrentDataWhenNewObserve: Boolean = false, crossinline observerBlock: (changedData: T) -> Unit): MutableLiveData<T> {
+    return registerWithKeyPair<T>(owner,messageEventName ,messageCacheName, needCurrentDataWhenNewObserve).let { liveData ->
         if (isObserverForever) {
             liveData.observeForever {
                 it?.let(observerBlock)
